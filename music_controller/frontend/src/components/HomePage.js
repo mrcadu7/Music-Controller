@@ -1,24 +1,57 @@
-import React , { Component } from "react";
+import React, { useState, useEffect } from "react";
 import CreateRoomPage from "./CreateRoomPage";
 import RoomJoinPage from "./RoomJoinPage";
 import Room from "./Room";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+    Button,
+    Grid,
+    Typography,
+    ButtonGroup
+} from "@mui/material";
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 
+function HomePageContent({ setRoomCode }) {
+    const navigate = useNavigate();
 
-export default class HomePage extends Component {
+    useEffect(() => {
+        fetch("/api/user-in-room")
+            .then((response) => response.json())
+            .then((data) => {
+                setRoomCode(data.code);
+                if (data.code) {
+                    navigate(`/room/${data.code}`);
+                }
+            });
+    }, [navigate, setRoomCode]);
 
-    constructor(props) {
-        super(props);
-    }
+    return (
+        <Grid container spacing={3}>
+            <Grid item xs={12} align="center">
+                <Typography variant="h3" compact="h3">
+                    House Party
+                </Typography>
+            </Grid>
+            <Grid item xs={12} align="center">
+                <ButtonGroup disableElevation variant="contained" color="primary">
+                    <Button color="primary" to="/join" component={Link}>Join Room</Button>
+                    <Button color="secondary" to="/create" component={Link}>Create Room</Button>
+                </ButtonGroup>
+            </Grid>
+        </Grid>
+    );
+}
 
-    render() {
-        return <Router>
+export default function HomePage() {
+    const [roomCode, setRoomCode] = useState(null);
+
+    return (
+        <Router>
             <Routes>
-                <Route path="/" element={<p>Essa é a pagina inicial</p>} />
+                <Route path="/" element={roomCode ? null : <HomePageContent setRoomCode={setRoomCode} />} />
                 <Route path="/join" element={<RoomJoinPage />} />
                 <Route path="/create" element={<CreateRoomPage />} />
                 <Route path="/room/:roomCode" element={<Room />} />
             </Routes>
         </Router>
-    }
+    );
 }
