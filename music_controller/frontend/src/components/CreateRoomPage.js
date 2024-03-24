@@ -8,49 +8,151 @@ import {
     Radio,
     RadioGroup,
     FormControl,
-    FormHelperText
+    FormHelperText,
+    Collapse,
+    Alert
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
 
 
-const CreateRoomPage = (props) => {  // OBS IMPORTANTE.. Utilizar classes se tornou antiquado, então o ideal é utilzar OU functions ou consts nos componentes!
-    const defaultVotes = 2;
+export default function CreateRoomPage({ 
+    guestCanPause = true, 
+    votesToSkip = 2, 
+    update = false, 
+    roomCode = null,
+    updateCallback = () => {}
+  }) {
+
     const navigate = useNavigate();
-
-    const [votesToSkip, setVotesToSkip] = useState(defaultVotes);
-    const [guestCanPause, setGuestCanPause] = useState(true);
-
+  
+    const [state, setState] = useState({
+      guestCanPause,
+      votesToSkip,
+      errorMsg: "",
+      successMsg: "",
+    });
+  
     const handleVotesChange = (e) => {
-        setVotesToSkip(e.target.value);
+      setState({
+        ...state,
+        votesToSkip: e.target.value,
+      });
     }
-
+  
     const handleGuestCanPauseChange = (e) => {
-        setGuestCanPause(e.target.value === 'true' ? true : false);
+      setState({
+        ...state,
+        guestCanPause: e.target.value === 'true' ? true : false,
+      });
     }
-
+  
     const handleRoomButtonPressed = () => {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          votes_to_skip: state.votesToSkip,
+          guest_can_pause: state.guestCanPause,
+        }),
+      };
+      fetch("/api/create-room", requestOptions)
+        .then((response) => response.json())
+        .then((data) => navigate("/room/" + data.code));
+    }
+  
+    const handleUpdateButtonPressed = () => {
+
         const requestOptions = {
-            method: "POST",
+            method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                votes_to_skip: votesToSkip,
-                guest_can_pause: guestCanPause,
+            votes_to_skip: state.votesToSkip,
+            guest_can_pause: state.guestCanPause,
+            code: roomCode,
             }),
         };
-        fetch("/api/create-room", requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                navigate("/room/" + data.code);
+        fetch("/api/update-room", requestOptions).then((response) => {
+            if (response.ok) {
+            setState({
+                ...state,
+                successMsg: "Room updated successfully!",
+
             });
+            } else {
+            setState({
+                ...state,
+                errorMsg: "Error updating room...",
+            });
+            }
+            updateCallback();
+        });
     }
+
+    const renderCreateButtons = () => (
+        <>
+          <Grid item xs={12} align="center">
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={handleRoomButtonPressed}
+            >
+              Create Room
+            </Button>
+          </Grid>
+          <Grid item xs={12} align="center">
+            <Button
+              color="primary"
+              variant="contained"
+              to="/"
+              component={Link}
+            >
+              Back
+            </Button>
+          </Grid>
+        </>
+      );
+      
+      const renderUpdateButtons = () => (
+        <Grid item xs={12} align="center">
+          <Button
+            color="primary" 
+            variant="contained" 
+            onClick={handleUpdateButtonPressed}
+          >
+            Update Room
+          </Button>
+        </Grid>
+      );
+
+
+    
+    const title = update ? "Update Room" : "Create Room";
 
     return (
         <Grid container spacing={1}>
             <Grid item xs={12} align="center">
+                <Collapse in={state.errorMsg != "" || state.successMsg != ""}>
+                    {state.successMsg != "" ? (
+                        <Alert
+                            severity="success"
+                            onClose={() => setState({ ...state, successMsg: "" })}
+                        >
+                            {state.successMsg}
+                        </Alert>
+                    ) : (
+                        <Alert
+                            severity="error"
+                            onClose={() => setState({ ...state, errorMsg: "" })}
+                        >
+                            {state.errorMsg}
+                        </Alert>
+                    )}
+                </Collapse>
+            </Grid>
+            <Grid item xs={12} align="center">
                 <Typography component="h4" variant="h4">
-                    Create A Room
+                    {title}
                 </Typography>
             </Grid>
             <Grid item xs={12} align="center">
@@ -58,7 +160,10 @@ const CreateRoomPage = (props) => {  // OBS IMPORTANTE.. Utilizar classes se tor
                     <FormHelperText align="center">
                         Guest Control of Playback State
                     </FormHelperText>
-                    <RadioGroup row defaultValue="true" onChange={handleGuestCanPauseChange}>
+                    <RadioGroup row 
+                    defaultValue={guestCanPause.toString()} 
+                    onChange={handleGuestCanPauseChange}
+                    >
                         <FormControlLabel
                             value="true"
                             control={<Radio color="primary"/>}
@@ -80,7 +185,7 @@ const CreateRoomPage = (props) => {  // OBS IMPORTANTE.. Utilizar classes se tor
                         required={true}
                         type="number"
                         onChange={handleVotesChange}
-                        defaultValue={defaultVotes}
+                        defaultValue={votesToSkip}
                         inputProps={{
                             min: 1,
                             style: { textAlign: "center" },
@@ -91,18 +196,9 @@ const CreateRoomPage = (props) => {  // OBS IMPORTANTE.. Utilizar classes se tor
                     </FormHelperText>
                 </FormControl>
             </Grid>
-            <Grid item xs={12} align="center">
-                <Button color="primary" variant="contained" onClick={handleRoomButtonPressed}>
-                    Create A Room
-                </Button>
-            </Grid>
-            <Grid item xs={12} align="center">
-                <Button color="secondary" variant="contained" to="/" component={Link}>
-                    Back
-                </Button>
-            </Grid>
+            {update ? renderUpdateButtons() : renderCreateButtons()}
+
         </Grid>
     );
 }
 
-export default CreateRoomPage;
