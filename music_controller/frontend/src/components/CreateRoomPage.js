@@ -21,7 +21,6 @@ export default function CreateRoomPage({
     votesToSkip = 2, 
     update = false, 
     roomCode = null,
-    updateCallback = () => {}
   }) {
 
     const navigate = useNavigate();
@@ -85,7 +84,7 @@ export default function CreateRoomPage({
                 errorMsg: "Error updating room...",
             });
             }
-            updateCallback();
+            
         });
     }
 
