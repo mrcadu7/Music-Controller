@@ -15,6 +15,7 @@ export default function Room() {
         guestCanPause: false,
         isHost: false,
         showSettings: false,
+        spotifyAuthenticated: false,
     });
     const { roomCode } = useParams();
     const navigate = useNavigate();
@@ -26,14 +27,35 @@ export default function Room() {
                 setState({
                     votesToSkip: data.votes_to_skip,
                     guestCanPause: data.guest_can_pause,
-                    isHost: data.is_host,
+                    isHost: data.is_host
                 });
+                if (data.is_host) { 
+                    authenticateSpotify();
+                }
             }).catch((error) => console.log("Error:", error));
     }
     
     useEffect(() => {
         getRoomDetails();
     }, [roomCode]);
+
+
+    const authenticateSpotify = () => {
+        fetch("/spotify/is-authenticated")
+            .then((response) => response.json())
+            .then((data) => {
+                setState(prevState => ({
+                    ...prevState,
+                    spotifyAuthenticated: data.status,
+                }));
+                console.log(data.status)
+                if (!data.status) {
+                    fetch("/spotify/get-auth-url").then((response) => response.json()).then((data) => {
+                        window.location.replace(data.url);
+                    })
+                }
+            }).catch((error) => console.log("Error:", error));
+    }
 
     const leaveButtonPressed = () => {
         const requestOptions = {
@@ -66,7 +88,7 @@ export default function Room() {
                     <Button
                         color="secondary"
                         variant="contained"
-                        onClick={() => {getRoomDetails(); updateShowSettings(false)}}
+                        onClick={() => {getRoomDetails()}}
                     >
                         Close
                     </Button>

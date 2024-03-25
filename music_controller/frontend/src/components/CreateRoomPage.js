@@ -21,6 +21,7 @@ export default function CreateRoomPage({
     votesToSkip = 2, 
     update = false, 
     roomCode = null,
+    spotifyAuthenticated = false
   }) {
 
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ export default function CreateRoomPage({
       votesToSkip,
       errorMsg: "",
       successMsg: "",
+      spotifyAuthenticated,
     });
   
     const handleVotesChange = (e) => {
@@ -53,6 +55,7 @@ export default function CreateRoomPage({
         body: JSON.stringify({
           votes_to_skip: state.votesToSkip,
           guest_can_pause: state.guestCanPause,
+          spotifyAuthenticated: state.spotifyAuthenticated,
         }),
       };
       fetch("/api/create-room", requestOptions)
