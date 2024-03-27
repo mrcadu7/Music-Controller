@@ -15,6 +15,16 @@ import {
 
 export default function MusicPlayer(props) {
 
+    const skipSong = () => {
+        fetch('/spotify/skip', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
+
+
     const pauseSong = () => {
         fetch('/spotify/pause', {
             method: 'PUT',
@@ -30,13 +40,13 @@ export default function MusicPlayer(props) {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => console.log(response))
+        })
     }
 
     const songProgress = (props.time / props.duration) * 100;
 
     return (
-        <Card>
+        <Card >
             <Grid container alignItems="center">
                 <Grid item align="center" xs={4}>
                     <img src={props.image_url} height="100%" width="100%" />
@@ -56,9 +66,12 @@ export default function MusicPlayer(props) {
                         >
                             {props.is_playing ? <Pause /> : <PlayArrow />}
                         </IconButton>
-                        <IconButton>
+                        <IconButton onClick={() => skipSong()}>
                             <SkipNext />
                         </IconButton>
+                        <Typography variant="subtitle1">
+                            ({props.votes} / {props.votes_required}) 
+                        </Typography>
                     </div>
                 </Grid>
             </Grid>

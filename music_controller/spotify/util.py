@@ -10,7 +10,6 @@ BASE_URL = 'https://api.spotify.com/v1/me/' # ver depois
 
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
-    print(user_tokens)
     if user_tokens.exists():
         return user_tokens[0]
 
@@ -30,7 +29,6 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
     else:
         tokens = SpotifyToken(user=session_id, access_token=access_token, token_type=token_type, expires_in=expires_in, refresh_token=refresh_token)
         tokens.save()
-
 
     
 def is_spotify_authenticated(session_id):
@@ -74,8 +72,6 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
         
     response = get(BASE_URL + endpoint, {}, headers=header)
     
-    
-    
     try:
         return response.json()
     except:
@@ -88,3 +84,7 @@ def play_song(session_id):
 
 def pause_song(session_id):
     return execute_spotify_api_request(session_id, "player/pause", put_=True)
+
+
+def skip_song(session_id):
+    return execute_spotify_api_request(session_id, "player/next", post_=True)
