@@ -1,0 +1,14 @@
+.text {
+    color: black;
+    font-size: 20px;
+    justify-content: center;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.button { 
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

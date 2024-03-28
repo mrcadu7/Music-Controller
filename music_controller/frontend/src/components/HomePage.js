@@ -11,6 +11,8 @@ import {
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
 import Info from "./Info";
 
+import styles from './HomePage.module.css'
+
 function HomePageContent({ setRoomCode }) {
     const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ function HomePageContent({ setRoomCode }) {
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} align="center">
-                <Typography variant="h3" compact="h3">
+                <Typography variant="h3" compact="h3" className={styles.title}>
                     House Party
                 </Typography>
             </Grid>

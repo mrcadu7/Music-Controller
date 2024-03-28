@@ -8,6 +8,8 @@ import {
 
 import { Link, useNavigate } from "react-router-dom";
 
+import styles from './RoomJoinPage.module.css'
+
 export default function RoomJoinPage() {
     const [roomCode, setRoomCode] = useState("");
     const [error, setError] = useState("");
@@ -39,8 +41,8 @@ export default function RoomJoinPage() {
     return (
         <Grid container spacing={1}>
             <Grid item xs={12} align="center">
-                <Typography component="h4" variant="h4">
-                    Join A Room
+                <Typography component="h4" variant="h4" className={styles.join}>
+                    Join a Room
                 </Typography>
             </Grid>
             <Grid item xs={12} align="center">
@@ -60,7 +62,7 @@ export default function RoomJoinPage() {
                     color="primary"
                     onClick={roomButtonPressed}
                 >
-                    Entrar na sala
+                    Enter Room
                 </Button>
             </Grid>
             <Grid item xs={12} align="center">
@@ -70,7 +72,7 @@ export default function RoomJoinPage() {
                     to="/"
                     component={Link}
                 >
-                    Voltar
+                    Back
                 </Button>
             </Grid>
         </Grid>

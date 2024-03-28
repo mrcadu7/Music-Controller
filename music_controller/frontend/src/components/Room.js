@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import CreateRoomPage from "./CreateRoomPage";
 import MusicPlayer from "./MusicPlayer";
 
+import styles from './Room.module.css'
 
 export default function Room() {
     const [state, setState] = useState({
@@ -138,7 +139,7 @@ export default function Room() {
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} align="center">
-                <Typography variant="h4" component="h4">
+                <Typography variant="h4" component="h4" className={styles.title}>
                     Room: {roomCode}
                 </Typography>
             </Grid>

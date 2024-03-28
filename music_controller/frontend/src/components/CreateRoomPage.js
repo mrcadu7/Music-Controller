@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
-
+import styles from './CreateRoomPage.module.css'
 
 export default function CreateRoomPage({ 
     guestCanPause = true, 
@@ -153,13 +153,13 @@ export default function CreateRoomPage({
                 </Collapse>
             </Grid>
             <Grid item xs={12} align="center">
-                <Typography component="h4" variant="h4">
+                <Typography component="h4" variant="h4" className={styles.title}>
                     {title}
                 </Typography>
             </Grid>
             <Grid item xs={12} align="center">
                 <FormControl component="fieldset">
-                    <FormHelperText align="center">
+                    <FormHelperText align="center" className={styles.h4}>
                         Guest Control of Playback State
                     </FormHelperText>
                     <RadioGroup row 
@@ -193,7 +193,7 @@ export default function CreateRoomPage({
                             style: { textAlign: "center" },
                         }}
                     />
-                    <FormHelperText align="center">
+                    <FormHelperText align="center" className={styles.h4}>
                         Votes Required to Skip Song
                     </FormHelperText>
                 </FormControl>
