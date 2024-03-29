@@ -1,0 +1,11 @@
+FROM node:14 as build-deps
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm install
+COPY . ./
+
+# Durante o desenvolvimento, inicie o servidor de desenvolvimento do React
+CMD [ "npm", "run", "dev" ]
+
+# Expose port
+EXPOSE 3000

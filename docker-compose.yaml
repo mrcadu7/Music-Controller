@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  backend:
+    build: 
+      context: ./music_controller
+      dockerfile: DOCKERFILE
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./music_controller:/app
+    ports:
+      - 8000:8000
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+
+  frontend:
+    build: 
+      context: ./music_controller/frontend
+      dockerfile: DOCKERFILE
+    command: npm run dev
+    volumes:
+      - ./music_controller/frontend:/usr/src/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
